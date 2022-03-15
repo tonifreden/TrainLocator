@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <title>Train Locator</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+    </head>
+
+    <body>
+        <div style="clear: both; display: block; height: 20px;"></div>
+        <div class="container">
+            <div class="col-md-12">
+                <h3 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]! Welcome to Train Locator!</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-1">
+                    <form th:action="@{/logout}" method="POST">
+                        <input type="submit" value="Sign Out" class="btn btn-sm btn-danger"/>
+                    </form>
+                </div>
+                <!-- <div sec:authorize="hasAuthority('ADMIN')" class="col-md-2 offset-md-1">
+                    <a href="/userlist" class="btn btn-sm btn-outline-info">User list</a>
+                </div> -->
+            </div>
+            <!-- <div th:if="${warningMessage}">
+                <div style="clear: both; display: block; height: 20px;"></div>
+                <div class="alert alert-warning col-md-4" th:text="${warningMessage}"></div>
+            </div> -->
+        </div>
+        <div class="container">
+            <div style="clear: both; display: block; height: 20px;"></div>
+            <div class="col-md-4">
+                <h1>Trains</h1>
+            </div>
+            <div style="clear: both; display: block; height: 20px;"></div>
+            <table class="table table-striped">
+                <tr>
+                    <th>Name</th>
+                    <th>Destination</th>
+                    <th>Speed</th>
+                    <th>Coordinates</th>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                </tr>
+                <tr th:if="${trains.empty}">
+                    <td colspan="4">No workouts yet! Add a workout to get started.</td>
+                </tr>
+                <tr th:each="train : ${trains}">
+                    <td th:text="${train.name}"></td>
+                    <td th:text="${train.destination}"></td>
+                    <td th:text="${train.speed}"></td>
+                    <td th:text="|${train.coordinates[0]}, ${train.coordinates[1]}|"></td>
+                    <!-- <td><a th:href="@{/workoutlist/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-success">See exercises</a></td>
+                    <td><a th:href="@{/edit/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-warning">Edit workout</a></td>
+                    <td><a th:href="@{/delete/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-outline-danger" onclick="return confirm('Are you sure you wish to delete this workout?')">Delete workout</a></td> -->
+                </tr>
+            </table>
+            <a href="/add" class="btn btn-primary">Add workout</a>
+        </div>
+    </body>
+</html>
