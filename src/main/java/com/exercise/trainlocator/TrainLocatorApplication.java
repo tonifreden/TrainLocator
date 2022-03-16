@@ -2,6 +2,8 @@ package com.exercise.trainlocator;
 
 import com.exercise.trainlocator.domain.Train;
 import com.exercise.trainlocator.domain.TrainRepository;
+import com.exercise.trainlocator.domain.User;
+import com.exercise.trainlocator.domain.UserRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +21,15 @@ public class TrainLocatorApplication {
 	}
 
 	@Bean
-	public CommandLineRunner trainDemo(TrainRepository trainRepository) {
+	public CommandLineRunner trainDemo(TrainRepository trainRepository, UserRepository userRepository) {
 		return (args) -> {
-			Log.info("save a couple of trains");
+			Log.info("save a couple of trains and users");
+
+			User user = new User("user", "Usery", "McUserface", "$2a$10$iLYJvJT2LsCLRF0TAWr1IeixohSPsFQw7.ElBdfThN9Jo.xXdHJ5G", "user@usermail.user", "USER");
+			User admin = new User("admin", "Adminy", "McAdminface", "$2a$10$hpVpTvIG7kTUzYBZg4ED0exmW.HD1dSe6s.Z8nYaqJUGg/WdiYNvW", "admin@boss.com", "ADMIN");
+			userRepository.save(user);
+			userRepository.save(admin);
+
 			Double[] coords = {60.12, 12.60};
 			Double[] coords2 = {70.12, 12.70};
 			trainRepository.save(new Train("ASD", "Skulli", 0.12, coords));
