@@ -25,6 +25,14 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    // User's personal info page
+    @PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
+    @GetMapping("/personalinfo")
+    public String personalInfo(Model model, Authentication auth) {
+        model.addAttribute("user", userRepository.findByUsername(auth.getName()));
+        return "personalinfo";
+    }
+
     // See all users - ADMIN ONLY
     @PreAuthorize(value = "hasAuthority('ADMIN')")
     @GetMapping("/userlist")
@@ -36,13 +44,13 @@ public class UserController {
     // Delete a user - ADMIN ONLY
     @PreAuthorize(value = "hasAuthority('ADMIN')")
     @GetMapping("/userlist/delete/{id}")
-    public String deleteUser(@PathVariable("id") Long userId, RedirectAttributes redirectAttributes) {
-        if (userRepository.count() > 1) {
+    public String deleteUser(@PathVariable("id") Long userId, Authentication auth, RedirectAttributes redirectAttributes) {
+        if (userRepository.findByUsername(auth.getName()) != userRepository.findById(userId).get() && userRepository.count() > 1) {
             userRepository.deleteById(userId);
-            redirectAttributes.addFlashAttribute("successMessage", "You have successfully deleted a user.");
+            redirectAttributes.addFlashAttribute("infoMessage", "You have successfully deleted a user.");
             return "redirect:../../userlist";
         } else {
-            redirectAttributes.addFlashAttribute("successMessage", "You can't do that.");
+            redirectAttributes.addFlashAttribute("infoMessage", "You can't do that.");
             return "redirect:../../userlist";
         }
     }

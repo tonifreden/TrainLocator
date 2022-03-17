@@ -12,20 +12,19 @@
             <div class="col-md-12">
                 <h3 th:inline="text">Hello [[${user.firstName}]], welcome to Train Locator!</h3>
             </div>
-            <div class="row">
+            <div class="row col-md-10">
                 <div class="col-md-1">
                     <form th:action="@{/logout}" method="POST">
                         <input type="submit" value="Sign Out" class="btn btn-sm btn-danger"/>
                     </form>
                 </div>
+                <div class="col-md-2">
+                    <a href="/personalinfo" class="btn btn-sm btn-outline-success">Personal info</a>
+                </div>
                 <div sec:authorize="hasAuthority('ADMIN')" class="col-md-2 offset-md-1">
                     <a href="/userlist" class="btn btn-sm btn-outline-info">User list</a>
                 </div>
             </div>
-            <!-- <div th:if="${warningMessage}">
-                <div style="clear: both; display: block; height: 20px;"></div>
-                <div class="alert alert-warning col-md-4" th:text="${warningMessage}"></div>
-            </div> -->
         </div>
         <div class="container">
             <div style="clear: both; display: block; height: 20px;"></div>
@@ -33,29 +32,31 @@
                 <h1>Trains</h1>
             </div>
             <div style="clear: both; display: block; height: 20px;"></div>
-            <table class="table table-striped">
-                <tr>
-                    <th>Name</th>
-                    <th>Destination</th>
-                    <th>Speed</th>
-                    <th>Coordinates</th>
-                    <th>&nbsp;</th>
-                    <th>&nbsp;</th>
-                </tr>
-                <tr th:if="${trains.empty}">
-                    <!-- <td colspan="4">No workouts yet! Add a workout to get started.</td> -->
-                </tr>
-                <tr th:each="train : ${trains}">
-                    <td th:text="${train.name}"></td>
-                    <td th:text="${train.destination}"></td>
-                    <td th:text="${train.speed}"></td>
-                    <td th:text="|${train.coordinates[0]}, ${train.coordinates[1]}|"></td>
-                    <!-- <td><a th:href="@{/workoutlist/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-success">See exercises</a></td>
-                    <td><a th:href="@{/edit/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-warning">Edit workout</a></td>
-                    <td><a th:href="@{/delete/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-outline-danger" onclick="return confirm('Are you sure you wish to delete this workout?')">Delete workout</a></td> -->
-                </tr>
-            </table>
-            <a href="/add" class="btn btn-primary">Add workout</a>
+            <div class="col-md-12">
+                <table class="table table-striped">
+                    <tr>
+                        <th>Name</th>
+                        <th>Destination</th>
+                        <th>Speed</th>
+                        <th>Coordinates</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                    <tr th:if="${trains.empty}">
+                        <td colspan="4">No trains here!</td>
+                    </tr>
+                    <tr th:each="train : ${trains}">
+                        <td th:text="${train.name}"></td>
+                        <td th:text="${train.destination}"></td>
+                        <td th:text="${train.speed}"></td>
+                        <td th:text="|${train.coordinates[0]}, ${train.coordinates[1]}|"></td>
+                        <!-- <td><a th:href="@{/workoutlist/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-success">See exercises</a></td>
+                        <td><a th:href="@{/edit/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-warning">Edit workout</a></td>
+                        <td><a th:href="@{/delete/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-outline-danger" onclick="return confirm('Are you sure you wish to delete this workout?')">Delete workout</a></td> -->
+                    </tr>
+                </table>
+            </div>
+            <!-- <a href="/add" class="btn btn-primary">Add workout</a> -->
         </div>
     </body>
 </html>

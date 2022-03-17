@@ -27,8 +27,10 @@ public class TrainLocatorApplication {
 
 			User user = new User("user", "Usery", "McUserface", "$2a$10$iLYJvJT2LsCLRF0TAWr1IeixohSPsFQw7.ElBdfThN9Jo.xXdHJ5G", "user@usermail.user", "USER");
 			User admin = new User("admin", "Adminy", "McAdminface", "$2a$10$hpVpTvIG7kTUzYBZg4ED0exmW.HD1dSe6s.Z8nYaqJUGg/WdiYNvW", "admin@boss.com", "ADMIN");
-			userRepository.save(user);
+			User toni = new User("toni", "Toni", "Asdasd", "$2a$10$eAvDmpV07TZnwqBW/oRlmuqQyduFLdInBEZ1elBxi/g1sXQ9dQgp6", "toni@admin.com", "ADMIN");
 			userRepository.save(admin);
+			userRepository.save(toni);
+			userRepository.save(user);
 
 			Double[] coords = {60.12, 12.60};
 			Double[] coords2 = {70.12, 12.70};
