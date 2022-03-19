@@ -5,31 +5,28 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Train {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private int trainNumber;
+
     private String name;
 
     private String destination;
 
-    private Double speed;
+    private Location location;
 
-    private Double[] coordinates;
+    private Double speed;
 
     public Train() {
 
-    }
-
-    public Train(String name, String destination, Double speed, Double[] coordinates) {
-        super();
-        this.name = name;
-        this.destination = destination;
-        this.speed = speed;
-        this.coordinates = coordinates;
     }
 
     public Long getId() {
@@ -38,6 +35,14 @@ public class Train {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getTrainNumber() {
+        return trainNumber;
+    }
+
+    public void setTrainNumber(int trainNumber) {
+        this.trainNumber = trainNumber;
     }
 
     public String getName() {
@@ -56,6 +61,14 @@ public class Train {
         this.destination = destination;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     public Double getSpeed() {
         return speed;
     }
@@ -64,17 +77,10 @@ public class Train {
         this.speed = speed;
     }
 
-    public Double[] getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Double[] coordinates) {
-        this.coordinates = coordinates;
-    }
-
     @Override
     public String toString() {
         return "Name: " + name + ", Destination: " + destination +
-                ", Speed: " + speed + ", Coordinates: " + coordinates[0] + ", " + coordinates[1];
+                ", Location: " + location + 
+                ", Speed: " + speed;
     }
 }

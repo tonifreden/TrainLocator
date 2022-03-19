@@ -39,8 +39,6 @@
                         <th>Destination</th>
                         <th>Speed</th>
                         <th>Coordinates</th>
-                        <th>&nbsp;</th>
-                        <th>&nbsp;</th>
                     </tr>
                     <tr th:if="${trains.empty}">
                         <td colspan="4">No trains here!</td>
@@ -49,14 +47,10 @@
                         <td th:text="${train.name}"></td>
                         <td th:text="${train.destination}"></td>
                         <td th:text="${train.speed}"></td>
-                        <td th:text="|${train.coordinates[0]}, ${train.coordinates[1]}|"></td>
-                        <!-- <td><a th:href="@{/workoutlist/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-success">See exercises</a></td>
-                        <td><a th:href="@{/edit/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-warning">Edit workout</a></td>
-                        <td><a th:href="@{/delete/{id}(id=${workout.workoutId})}" class="btn btn-xs btn-outline-danger" onclick="return confirm('Are you sure you wish to delete this workout?')">Delete workout</a></td> -->
+                        <td th:text="|${train.location.coordinates[0]}, ${train.location.coordinates[1]}|"></td>
                     </tr>
                 </table>
             </div>
-            <!-- <a href="/add" class="btn btn-primary">Add workout</a> -->
         </div>
     </body>
 </html>
