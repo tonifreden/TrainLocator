@@ -113,5 +113,4 @@ public class UserController {
         redirectAttributes.addFlashAttribute("successMessage", "You have successfully signed up!");
         return "redirect:/login";
     }
-    // TODO: Edit & refactor signup so that newly signed-up user automatically logs in?
 }

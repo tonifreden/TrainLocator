@@ -3,6 +3,7 @@ package com.exercise.trainlocator;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import com.exercise.trainlocator.domain.Train;
 import com.exercise.trainlocator.domain.TrainRepository;
@@ -24,6 +25,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
+
 @SpringBootApplication
 public class TrainLocatorApplication {
 	private static final Logger Log = LoggerFactory.getLogger(TrainLocatorApplication.class);
@@ -37,27 +41,28 @@ public class TrainLocatorApplication {
 		return builder.build();
 	}
 
+	// Method to fetch live data from digitraffic
+	public Train[] getTrainData(RestTemplate restTemplate) {
+		final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().build());
+		restTemplate.setRequestFactory(clientHttpRequestFactory);
+		final HttpHeaders headers = new HttpHeaders();
+		headers.add("Accept-Encoding", "gzip");
+		HttpEntity<Train> entity = new HttpEntity<>(headers);
+		ResponseEntity<Train[]> responseEntity = restTemplate.exchange("https://rata.digitraffic.fi/api/v1/train-locations/latest/", HttpMethod.GET, entity, Train[].class);
+		return responseEntity.getBody();
+	}
+
 	@Bean
 	public CommandLineRunner trainDemo(TrainRepository trainRepository, UserRepository userRepository, RestTemplate restTemplate) throws Exception {
 		return (args) -> {
 			Log.info("save a couple of demo users");
 
-			User user = new User("user", "Usery", "McUserface", "$2a$10$iLYJvJT2LsCLRF0TAWr1IeixohSPsFQw7.ElBdfThN9Jo.xXdHJ5G", "user@usermail.user", "USER");
-			User admin = new User("admin", "Adminy", "McAdminface", "$2a$10$hpVpTvIG7kTUzYBZg4ED0exmW.HD1dSe6s.Z8nYaqJUGg/WdiYNvW", "admin@boss.com", "ADMIN");
-			User toni = new User("toni", "Toni", "Asdasd", "$2a$10$eAvDmpV07TZnwqBW/oRlmuqQyduFLdInBEZ1elBxi/g1sXQ9dQgp6", "toni@admin.com", "ADMIN");
-			userRepository.save(admin);
-			userRepository.save(toni);
-			userRepository.save(user);
+			userRepository.save(new User("admin", "Admin", "Guy", "$2a$10$hpVpTvIG7kTUzYBZg4ED0exmW.HD1dSe6s.Z8nYaqJUGg/WdiYNvW", "admin@boss.com", "ADMIN"));
+			userRepository.save(new User("user", "User", "Fellow", "$2a$10$iLYJvJT2LsCLRF0TAWr1IeixohSPsFQw7.ElBdfThN9Jo.xXdHJ5G", "user@usermail.user", "USER"));
 
-			// Fetch live data from digitraffic
-			final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().build());
-			restTemplate.setRequestFactory(clientHttpRequestFactory);
-			final HttpHeaders headers = new HttpHeaders();
-			headers.add("Accept-Encoding", "gzip");
-			HttpEntity<Train> entity = new HttpEntity<>(headers);
-			ResponseEntity<Train[]> responseEntity = restTemplate.exchange("https://rata.digitraffic.fi/api/v1/train-locations/latest/", HttpMethod.GET, entity, Train[].class);
-			Train[] trains = responseEntity.getBody();
-
+			// Fetch data
+			Train[] trains = getTrainData(restTemplate);
+			
 			// Add random name and destination to each train, then save them to repo
 			final List<String> possibleNames = Arrays.asList("Trainy McTrainface", "Thomas the Tank Engine", "Intercity");
 			final List<String> possibleDestinations = Arrays.asList("Helsinki", "Turku", "Tampere", "Oulu", "Jyväskylä", "Lappeenranta");
@@ -74,6 +79,29 @@ public class TrainLocatorApplication {
 			for (Train train : trainRepository.findAll()) {
 				Log.info(train.toString());
 			}
+
+			// Update data every 10 seconds
+			Observable.interval(10, TimeUnit.SECONDS, Schedulers.io())
+				.observeOn(Schedulers.newThread())
+				.doOnError(error -> Log.info(error.toString()))
+				.retry()
+				.subscribe(s -> {
+					Train[] updatedTrains = getTrainData(restTemplate);
+					for (Train train : updatedTrains) {
+						try {
+							if (trainRepository.findByTrainNumber(train.getTrainNumber()) == null) {
+								trainRepository.save(train);
+							} else {
+								Train oldTrain = trainRepository.findByTrainNumber(train.getTrainNumber()).get();
+								oldTrain.setLocation(train.getLocation());
+								oldTrain.setSpeed(train.getSpeed());
+								trainRepository.save(oldTrain);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
 		};
 	}
 }
