@@ -72,6 +72,7 @@ public class TrainLocatorApplication {
 			for (Train train : trains) {
 				train.setName(possibleNames.get(random.nextInt(possibleNames.size())) + " " + train.getTrainNumber());
 				train.setDestination(possibleDestinations.get(random.nextInt(possibleDestinations.size())));
+				train.getLocation().swapCoordinates();
 				trainRepository.save(train);
 			}
 
@@ -93,6 +94,7 @@ public class TrainLocatorApplication {
 								trainRepository.save(train);
 							} else {
 								Train oldTrain = trainRepository.findByTrainNumber(train.getTrainNumber()).get();
+								train.getLocation().swapCoordinates();
 								oldTrain.setLocation(train.getLocation());
 								oldTrain.setSpeed(train.getSpeed());
 								trainRepository.save(oldTrain);

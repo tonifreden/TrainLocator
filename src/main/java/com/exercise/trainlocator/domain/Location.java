@@ -22,6 +22,13 @@ public class Location {
         this.coordinates = coordinates;
     }
 
+    // Digitraffic's coordinate data is mixed up, must swap places
+    public void swapCoordinates() {
+        Double temp = this.coordinates[0];
+        this.coordinates[0] = this.coordinates[1];
+        this.coordinates[1] = temp;
+    }
+
     @Override
     public String toString() {
         return coordinates[0] + ", " + coordinates[1];
